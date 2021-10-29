@@ -1,0 +1,136 @@
+﻿@page "/counter/{id}/ts"
+
+<h3>Transactions</h3>
+<div class="container fill">
+    <div class="row">
+        <div class="col-md-auto align-self-center">
+            @Localizer["ChargePointLabel"]
+        </div>
+        <div class="col-md-auto align-self-center">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="ddbChargePoint" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @currentConnectorName
+                </button>
+                @if (connectorStatusViewModels == null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <div class="dropdown-menu" aria-labelledby="ddbChargePoint">
+                        @foreach (ConnectorStatusViewModel csvm in connectorStatusViewModels)
+                        {
+                            <a class="dropdown-item">@csvm.ConnectorName</a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-1">
+        </div>
+        <div class="col-md-auto align-self-center">
+            @Localizer["TimeSpanLabel"]
+        </div>
+        <div class="col-md-auto align-self-center">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="ddbTimespan" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @if (transactionListViewModels == null)
+                    {
+                        <p><em>Loading...</em></p>
+                    }
+                    else
+                    {
+                        @switch (transactionListViewModels.Timespan)
+                        {
+                            case 2:
+                                @Localizer["TimeSpan90"];
+                                break;
+                            case 3:
+                                @Localizer["TimeSpan365"];
+                                break;
+                            default:
+                                @Localizer["TimeSpan30"];
+                                break;
+                        }
+                    }
+                </button>
+                <div class="dropdown-menu" aria-labelledby="ddbTimespan">
+                    <a class="dropdown-item" href="~/Home/Transactions/@Uri.EscapeDataString(transactionListViewModels.CurrentChargePointId)">@Localizer["TimeSpan30"]</a>
+                    <a class="dropdown-item" href="~/Home/Transactions/@Uri.EscapeDataString(transactionListViewModels.CurrentChargePointId)">@Localizer["TimeSpan90"]</a>
+                    <a class="dropdown-item" href="~/Home/Transactions/@Uri.EscapeDataString(transactionListViewModels.CurrentChargePointId)">@Localizer["TimeSpan365"]</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+        </div>
+        <div class="col-md-auto align-self-center">
+            <a href="~/Home/Export/" data-toggle="tooltip" data-placement="top" title="@Localizer["DownloadCsv"]">
+                <i class="fas fa-file-csv fa-2x"></i>
+            </a>
+        </div>
+    </div>
+</div>
+@if (transactionListViewModels == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="th-sm">@Localizer["Connector"]</th>
+                <th class="th-sm">@Localizer["StartTime"]</th>
+                <th class="th-sm">@Localizer["StartTag"]</th>
+                <th class="th-sm">@Localizer["StartMeter"]</th>
+                <th class="th-sm">@Localizer["StopTime"]</th>
+                <th class="th-sm">@Localizer["StopTag"]</th>
+                <th class="th-sm">@Localizer["StopMeter"]</th>
+                <th class="th-sm">@Localizer["ChargeSum"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in transactionListViewModels.Transactions)
+            {
+                string startTag = t.StartTagId;
+                string stopTag = t.StopTagId;
+                if (!string.IsNullOrEmpty(t.StartTagId) && transactionListViewModels.ChargeTags != null && transactionListViewModels.ChargeTags.ContainsKey(t.StartTagId))
+                {
+                    startTag = transactionListViewModels.ChargeTags[t.StartTagId]?.TagName;
+                }
+                if (!string.IsNullOrEmpty(t.StopTagId) && transactionListViewModels.ChargeTags != null && transactionListViewModels.ChargeTags.ContainsKey(t.StopTagId))
+                {
+                    stopTag = transactionListViewModels.ChargeTags[t.StopTagId]?.TagName;
+                }
+                <tr>
+                    <td>@currentConnectorName</td>
+                    <td>@string.Format("{0} {1}", t.StartTime.ToLocalTime().ToShortDateString(), t.StartTime.ToLocalTime().ToShortTimeString())</td>
+                    <td>@startTag</td>
+                    <td>@string.Format("{0:0.0##}", t.MeterStart)</td>
+                    <td>@((t.StopTime != null) ? string.Format("{0} {1}", t.StopTime.Value.ToLocalTime().ToShortDateString(), t.StopTime.Value.ToLocalTime().ToShortTimeString()) : string.Empty)</td>
+                    <td>@stopTag</td>
+                    <td>@((t.MeterStop != null) ? string.Format("{0:0.0##}", t.MeterStop) : string.Empty)</td>
+                    <td>@((t.MeterStop != null) ? string.Format("{0:0.0##}", (t.MeterStop - t.MeterStart)) : string.Empty)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@inject OCPP.Core.ManagementBlazor.Data.Services.ChargePointContextServices ChargePointContextServices;
+@using OCPP.Core.ManagementBlazor.Models;
+@using Microsoft.AspNetCore.WebUtilities;
+@code {
+    string timespan = "";// = (Model.Timespan == 2) ? "?t=2" : ((Model.Timespan == 3) ? "?t=3" : string.Empty);
+    string currentConnectorName = string.Empty;
+    [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<Index> Localizer { get; set; }
+    private List<ConnectorStatusViewModel> connectorStatusViewModels = new List<ConnectorStatusViewModel>();
+    private TransactionListViewModel transactionListViewModels;
+    string id = "";
+    string ts = "";
+    protected override async Task OnInitializedAsync()
+    {
+        //var uri = Nav
+        //transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel();
+    }
+}
+

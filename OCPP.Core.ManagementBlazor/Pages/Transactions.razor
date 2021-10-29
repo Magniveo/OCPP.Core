@@ -1,0 +1,23 @@
+﻿@page "/transactions/{id}/{ts}"
+
+<h3>Transactions</h3>
+<div class="container fill">
+</div>
+@inject OCPP.Core.ManagementBlazor.Data.Services.ChargePointContextServices ChargePointContextServices;
+@using OCPP.Core.ManagementBlazor.Models;
+@using Microsoft.AspNetCore.WebUtilities;
+@code {
+    string timespan = "";// = (Model.Timespan == 2) ? "?t=2" : ((Model.Timespan == 3) ? "?t=3" : string.Empty);
+    string currentConnectorName = string.Empty;
+    [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<Index> Localizer { get; set; }
+    private List<ConnectorStatusViewModel> connectorStatusViewModels = new List<ConnectorStatusViewModel>();
+    private TransactionListViewModel transactionListViewModels;
+    string id = "";
+    string ts = "";
+    protected override async Task OnInitializedAsync()
+    {
+        //var uri = Nav
+        transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel(id,id,ts);
+    }
+}
+
