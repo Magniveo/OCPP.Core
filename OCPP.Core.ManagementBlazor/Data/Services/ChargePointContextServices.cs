@@ -29,6 +29,13 @@ namespace OCPP.Core.ManagementBlazor.Data.Services
                 return await context.ChargePoints.ToListAsync();
             }
         }
+        public async Task<List<ConnectorStatus>> GetConnectorStatuses()
+        {
+            using (var context = new Database.OCPPCoreContext(this.Config))
+            {
+                return await context.ConnectorStatuses.ToListAsync();
+            }
+        }
         public async Task<OverviewViewModel> GetOverviewViewModels() 
         {
             OverviewViewModel overviewModel = new OverviewViewModel();

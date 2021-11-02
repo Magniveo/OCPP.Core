@@ -1,0 +1,50 @@
+﻿@page "/connectorlist"
+
+<h3>Connectors</h3>
+<div class="row">
+@if (listConnectors != null)
+{
+    <table id="dtChargeTags" class="table table-striped table-bordered table-sm table-hover" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="th-sm">@Localizer["ChargePointId"]</th>
+                <th class="th-sm">@Localizer["ConnectorId"]</th>
+                <th class="th-sm">@Localizer["ConnectorName"]</th>
+                <th class="th-sm">@Localizer["LastStatus"]</th>
+                <th class="th-sm">@Localizer["LastStatusTime"]</th>
+                <th class="th-sm">@Localizer["LastMeter"]</th>
+                <th class="th-sm">@Localizer["LastMeterTime"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cs in listConnectors)
+            {
+            <tr class="table-row" >
+                <td>@cs.ChargePointId</td>
+                <td>@cs.ConnectorId</td>
+                <td>@cs.ConnectorName</td>
+                <td>@((!string.IsNullOrEmpty(cs.LastStatus)) ? cs.LastStatus : "-")</td>
+                <td>@((cs.LastStatusTime.HasValue) ? string.Format("{0:G}", cs.LastStatusTime.Value.ToLocalTime()) : "-")</td>
+                <td>@((cs.LastMeter.HasValue) ? string.Format("{0:0.0##}", cs.LastMeter.Value) : "-" )</td>
+                <td>@((cs.LastMeterTime.HasValue) ? string.Format("{0:G}", cs.LastMeterTime.Value.ToLocalTime()): "-")</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+</div>
+@inject OCPP.Core.ManagementBlazor.Data.Services.ChargePointContextServices ChargePointContextServices;
+@using OCPP.Core.Database;
+@code {
+    [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<Index> Localizer { get; set; }
+    private List<ConnectorStatus> listConnectors = new List<ConnectorStatus>();
+    protected override async Task OnInitializedAsync()
+    {
+        listConnectors = await ChargePointContextServices.GetConnectorStatuses();
+    }
+    private void SetOnChangeSelect(ChangeEventArgs __e)
+    {
+
+    }
+}
+

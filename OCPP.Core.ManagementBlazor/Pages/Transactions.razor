@@ -1,23 +1,64 @@
-﻿@page "/transactions/{id}/{ts}"
+﻿@page "/transactions"
+@page "/transactions/{id}"
+@page "/transactions/{id}/{ts}"
 
 <h3>Transactions</h3>
-<div class="container fill">
+<div class="row">
+    <select class="form-control" @bind="selectID" @bind:event="oninput" @onchange="SetOnChangeSelect">
+        @foreach (var cp in listCP)
+        {
+            <option value=@cp.ChargePointId>@cp.Name</option>
+        }
+    </select>
+</div>
+<div class="row">
+@if (listCP != null)
+{
+    <table id="dtTransactions" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="th-sm">@Localizer["Connector"]</th>
+                <th class="th-sm">@Localizer["StartTime"]</th>
+                <th class="th-sm">@Localizer["StartTag"]</th>
+                <th class="th-sm">@Localizer["StartMeter"]</th>
+                <th class="th-sm">@Localizer["StopTime"]</th>
+                <th class="th-sm">@Localizer["StopTag"]</th>
+                <th class="th-sm">@Localizer["StopMeter"]</th>
+                <th class="th-sm">@Localizer["ChargeSum"]</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+}
 </div>
 @inject OCPP.Core.ManagementBlazor.Data.Services.ChargePointContextServices ChargePointContextServices;
 @using OCPP.Core.ManagementBlazor.Models;
+@using OCPP.Core.Database;
 @using Microsoft.AspNetCore.WebUtilities;
 @code {
     string timespan = "";// = (Model.Timespan == 2) ? "?t=2" : ((Model.Timespan == 3) ? "?t=3" : string.Empty);
     string currentConnectorName = string.Empty;
+    string selectID;
     [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<Index> Localizer { get; set; }
     private List<ConnectorStatusViewModel> connectorStatusViewModels = new List<ConnectorStatusViewModel>();
     private TransactionListViewModel transactionListViewModels;
-    string id = "";
-    string ts = "";
+    [Parameter]
+    public string id { get; set; }
+    [Parameter]
+    public string ts { get; set; }
+    private List<ChargePoint> listCP = new List<ChargePoint>();
     protected override async Task OnInitializedAsync()
     {
+        listCP = await ChargePointContextServices.GetChargePoints();
+        //Console.WriteLine(String.Format("{0} -- {1}", id, ts));
         //var uri = Nav
-        transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel(id,id,ts);
+        //if()
+        //transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel(id,id,ts);
+    }
+    private void SetOnChangeSelect(ChangeEventArgs __e)
+    {
+
     }
 }
 

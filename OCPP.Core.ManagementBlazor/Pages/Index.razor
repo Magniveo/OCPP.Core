@@ -9,61 +9,68 @@ else
 {
         @foreach (var cpvm in chargePoints.ChargePoints)
         {
-            <div class="card border-secondary" style="max-width: 18rem;">
-                @switch (@cpvm.ConnectorStatus)
-                    {
-                        case ConnectorStatusEnum.Occupied:
-                            <div class="card-header bg-warning">
-                                <i class="oi oi-flash"></i>@cpvm.Name
-                            </div>
-                            <h5 class="card-title">@Localizer["Charging"].Value</h5>
-                            //SetStatusCardColor("bg-success");
-                            break;
-                        case ConnectorStatusEnum.Faulted:
-                            <div class="card-header bg-danger">
-                                <i class="oi oi-flash"></i>@cpvm.Name
-                            </div>
-                            <h5 class="card-title">@Localizer["Faulted"].Value</h5>
-                            //SetStatusCardColor("bg-danger");
-                            break;
-                        case ConnectorStatusEnum.Unavailable:
-                            <div class="card-header bg-dark">
-                                <i class="oi oi-flash"></i>@cpvm.Name
-                            </div>
-                            <h5 class="card-title">@Localizer["Unavailable"].Value</h5>
-                            //SetStatusCardColor("bg-light");
-                            break;
-                        case ConnectorStatusEnum.Undefined:
-                            <div class="card-header bg-light">
-                                <i class="oi oi-flash"></i>@cpvm.Name
-                            </div>
-                            <h5 class="card-title">@Localizer["Undefined"].Value</h5>
-                            break;
-                    }
-                    @if (cpvm.StartTime != null && cpvm.StopTime == null)
-                    {
-                        TimeSpan timeSpan = DateTime.UtcNow.Subtract(cpvm.StartTime.Value);
-                        var chargeTime = string.Format(Localizer["ChargeTime"].Value, (timeSpan.Days * 24 + timeSpan.Hours), timeSpan.Minutes);
-                        <p class="card-text">@chargeTime</p>
-                    }
-                <div class="card-body text-secondary">
-                    
-                </div>
-                @if (chargePoints.ServerConnection)
-                    {
-                        <div class="card-footer text-muted d-flex justify-content-between">
-                            <div>@cpvm.CurrentChargeData</div>
-                            @if (cpvm.Online)
-                            {
-                                <div><i class="oi oi-link-intact" title="@Localizer["ChargePointOnline"]"></i></div>
-                            }
-                            else
-                            {
-                                <div><i class="oi oi-link-broken" title="@Localizer["ChargePointOffline"]"></i></div>
-                            }
-                        </div>
-                    }
+<div class="card border-secondary" style="max-width: 18rem;">
+    @switch (@cpvm.ConnectorStatus)
+    {
+        case ConnectorStatusEnum.Available:
+            <div class="card-header bg-success">
+                <i class="oi oi-flash"></i>@cpvm.Name
             </div>
+            <h5 class="card-title">@Localizer["Available"].Value</h5>
+            //SetStatusCardColor("bg-success");
+            break;
+        case ConnectorStatusEnum.Occupied:
+            <div class="card-header bg-warning">
+                <i class="oi oi-flash"></i>@cpvm.Name
+            </div>
+            <h5 class="card-title">@Localizer["Charging"].Value</h5>
+            //SetStatusCardColor("bg-success");
+            break;
+        case ConnectorStatusEnum.Faulted:
+            <div class="card-header bg-danger">
+                <i class="oi oi-flash"></i>@cpvm.Name
+            </div>
+            <h5 class="card-title">@Localizer["Faulted"].Value</h5>
+            //SetStatusCardColor("bg-danger");
+            break;
+        case ConnectorStatusEnum.Unavailable:
+            <div class="card-header bg-dark">
+                <i class="oi oi-flash"></i>@cpvm.Name
+            </div>
+            <h5 class="card-title">@Localizer["Unavailable"].Value</h5>
+            //SetStatusCardColor("bg-light");
+            break;
+        case ConnectorStatusEnum.Undefined:
+            <div class="card-header bg-light">
+                <i class="oi oi-flash"></i>@cpvm.Name
+            </div>
+            <h5 class="card-title">@Localizer["Undefined"].Value</h5>
+            break;
+    }
+    @if (cpvm.StartTime != null && cpvm.StopTime == null)
+    {
+        TimeSpan timeSpan = DateTime.UtcNow.Subtract(cpvm.StartTime.Value);
+        var chargeTime = string.Format(Localizer["ChargeTime"].Value, (timeSpan.Days * 24 + timeSpan.Hours), timeSpan.Minutes);
+        <p class="card-text">@chargeTime</p>
+    }
+    <div class="card-body text-secondary">
+
+    </div>
+    @if (chargePoints.ServerConnection)
+    {
+        <div class="card-footer text-muted d-flex justify-content-between">
+            <div>@cpvm.CurrentChargeData</div>
+            @if (cpvm.Online)
+            {
+                <div><i class="oi oi-link-intact" title="@Localizer["ChargePointOnline"]"></i></div>
+            }
+            else
+            {
+                <div><i class="oi oi-link-broken" title="@Localizer["ChargePointOffline"]"></i></div>
+            }
+        </div>
+    }
+</div>
          }
 }
 @inject OCPP.Core.ManagementBlazor.Data.Services.ChargePointContextServices ChargePointContextServices; 
@@ -74,5 +81,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         chargePoints = await ChargePointContextServices.GetOverviewViewModels();
+        StateHasChanged();
     }
 }
