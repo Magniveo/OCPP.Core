@@ -4,15 +4,21 @@
 
 <h3>Transactions</h3>
 <div class="row">
+
     <select class="form-control" @bind="selectID" @bind:event="oninput" @onchange="SetOnChangeSelect">
         @foreach (var cp in listCP)
         {
             <option value=@cp.ChargePointId>@cp.Name</option>
         }
     </select>
+    <select class="form-control">
+        <option value="30">30</option>
+        <option value="90">90</option>
+        <option value="360">360</option>
+    </select>
 </div>
 <div class="row">
-@if (listCP != null)
+@if (transactionListViewModels != null)
 {
     <table id="dtTransactions" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
         <thead>
@@ -28,6 +34,29 @@
             </tr>
         </thead>
         <tbody>
+            @foreach (var t in transactionListViewModels.Transactions)
+            {
+            string startTag = t.StartTagId;
+            string stopTag = t.StopTagId;
+            if (!string.IsNullOrEmpty(t.StartTagId) && transactionListViewModels.ChargeTags != null && transactionListViewModels.ChargeTags.ContainsKey(t.StartTagId))
+            {
+            startTag = transactionListViewModels.ChargeTags[t.StartTagId]?.TagName;
+            }
+            if (!string.IsNullOrEmpty(t.StopTagId) && transactionListViewModels.ChargeTags != null && transactionListViewModels.ChargeTags.ContainsKey(t.StopTagId))
+            {
+            stopTag = transactionListViewModels.ChargeTags[t.StopTagId]?.TagName;
+            }
+            <tr>
+                <td>@currentConnectorName</td>
+                <td>@string.Format("{0} {1}", t.StartTime.ToLocalTime().ToShortDateString(), t.StartTime.ToLocalTime().ToShortTimeString())</td>
+                <td>@startTag</td>
+                <td>@string.Format("{0:0.0##}", t.MeterStart)</td>
+                <td>@((t.StopTime != null) ? string.Format("{0} {1}", t.StopTime.Value.ToLocalTime().ToShortDateString(), t.StopTime.Value.ToLocalTime().ToShortTimeString()) : string.Empty)</td>
+                <td>@stopTag</td>
+                <td>@((t.MeterStop != null) ? string.Format("{0:0.0##}", t.MeterStop) : string.Empty)</td>
+                <td>@((t.MeterStop != null) ? string.Format("{0:0.0##}", (t.MeterStop - t.MeterStart)) : string.Empty)</td>
+            </tr>
+            }
         </tbody>
     </table>
 }
@@ -53,8 +82,9 @@
         listCP = await ChargePointContextServices.GetChargePoints();
         //Console.WriteLine(String.Format("{0} -- {1}", id, ts));
         //var uri = Nav
-        //if()
-        //transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel(id,id,ts);
+        if(listCP.Count>0)
+            transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel(listCP[0].ChargePointId,
+                "1", "1");
     }
     private void SetOnChangeSelect(ChangeEventArgs __e)
     {
