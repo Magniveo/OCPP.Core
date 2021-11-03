@@ -1,0 +1,134 @@
+﻿@page "/ModalDialog"
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="() => Close()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-2 align-self-center">
+                        <div class="form-group">
+                            <label class="inline-label" for="Name">@Localizer["NameLabel"]</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input class="form-control" data-val="true" data-val-length="@string.Format(Localizer["FieldMaxLength"].Value, 100)" data-val-length-max="100" data-val-required="@Localizer["RequiredField"]" id="Name" maxlength="100" name="Name" placeholder="@Localizer["NamePlaceholder"]" type="text" @bind="cp.Name" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="field-validation-valid text-danger" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 align-self-center">
+                        <div class="form-group">
+                            <label class="inline-label" for="Comment">@Localizer["CommentLabel"]</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input class="form-control" data-val="true" data-val-length="@string.Format(Localizer["FieldMaxLength"].Value, 200)" data-val-length-max="200" id="Comment" maxlength="200" name="Comment" placeholder="@Localizer["CommentPlaceholder"]" type="text" @bind="cp.Comment" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="field-validation-valid text-danger" data-valmsg-for="Comment" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-sm-2 align-self-center">
+                        <div class="form-group">
+                            <label class="inline-label" for="Username">@Localizer["UsernameLabel"]</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input class="form-control" data-val="true" data-val-length="@string.Format(Localizer["FieldMaxLength"].Value, 50)" data-val-length-max="50" id="Username" maxlength="50" name="Username" placeholder="@Localizer["UsernamePlaceholder"]" type="text" @bind="cp.Username" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="field-validation-valid text-danger" data-valmsg-for="Username" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 align-self-center">
+                        <div class="form-group">
+                            <label class="inline-label" for="Password">@Localizer["PasswordLabel"]</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input class="form-control" data-val="true" data-val-length="@string.Format(Localizer["FieldMaxLength"].Value, 50)" data-val-length-max="50" id="Password" maxlength="50" name="Password" placeholder="@Localizer["PasswordPlaceholder"]" type="text" @bind="cp.Password" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="field-validation-valid text-danger" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 align-self-center">
+                        <div class="form-group">
+                            <label class="inline-label" for="ClientCertThumb">@Localizer["ClientCertThumbLabel"]</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input class="form-control" data-val="true" data-val-length="@string.Format(Localizer["FieldMaxLength"].Value, 100)" data-val-length-max="100" id="ClientCertThumb" maxlength="100" name="ClientCertThumb" placeholder="@Localizer["ClientCertThumbPlaceholder"]" type="text" @bind="cp.ClientCertThumb" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="field-validation-valid text-danger" data-valmsg-for="ClientCertThumb" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+@using OCPP.Core.Database;
+@inject OCPP.Core.ManagementBlazor.Data.Services.ChargePointContextServices ChargePointContextServices;
+@code {
+    private ChargePoint cp = new ChargePoint();
+    [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<ModalDialog> Localizer { get; set; }
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+    protected override async Task OnInitializedAsync()
+    {
+        var test1 = Localizer["AddChargePoint"]; 
+        var test2 = Localizer["NameLabel"];
+    }
+    public async Task Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public async Task Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+    public void SetChargePoint(ChargePoint _cp)
+    {
+        cp = _cp;
+    }
+}

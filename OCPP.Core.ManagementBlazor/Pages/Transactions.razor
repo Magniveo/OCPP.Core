@@ -72,7 +72,7 @@
     string timespan = "";// = (Model.Timespan == 2) ? "?t=2" : ((Model.Timespan == 3) ? "?t=3" : string.Empty);
     string currentConnectorName = string.Empty;
     string selectID;
-    [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<Index> Localizer { get; set; }
+    [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<Transactions> Localizer { get; set; }
     private List<ConnectorStatusViewModel> connectorStatusViewModels = new List<ConnectorStatusViewModel>();
     private TransactionListViewModel transactionListViewModels;
     [Parameter]

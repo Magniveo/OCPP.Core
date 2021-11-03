@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCPP.Core.Database", "OCPP.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCPP.Core.Management", "OCPP.Core.Management\OCPP.Core.Management.csproj", "{26D1B695-4C8E-496E-A0BC-AE9E1FDB2788}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCPP.Core.ManagementBlazor", "OCPP.Core.ManagementBlazor\OCPP.Core.ManagementBlazor.csproj", "{D28EF3A7-DAE6-4003-BE2E-4A4D62559D69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCPP.Core.ManagementBlazor", "OCPP.Core.ManagementBlazor\OCPP.Core.ManagementBlazor.csproj", "{D28EF3A7-DAE6-4003-BE2E-4A4D62559D69}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AC9369B7-EC94-4EA0-87E7-B2EE8A2C1792} = {AC9369B7-EC94-4EA0-87E7-B2EE8A2C1792}
 	EndProjectSection

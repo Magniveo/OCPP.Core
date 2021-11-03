@@ -36,7 +36,7 @@
 @inject OCPP.Core.ManagementBlazor.Data.Services.ChargePointContextServices ChargePointContextServices;
 @using OCPP.Core.Database;
 @code {
-    [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<Index> Localizer { get; set; }
+    [Inject] public Microsoft.Extensions.Localization.IStringLocalizer<ConnectorList> Localizer { get; set; }
     private List<ConnectorStatus> listConnectors = new List<ConnectorStatus>();
     protected override async Task OnInitializedAsync()
     {
