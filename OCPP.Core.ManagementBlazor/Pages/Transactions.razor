@@ -5,16 +5,19 @@
 <h3>Transactions</h3>
 <div class="row">
 
-    <select class="form-control" @bind="selectID" @bind:event="oninput" @onchange="SetOnChangeSelect">
-        @foreach (var cp in listCP)
-        {
-            <option value=@cp.ChargePointId>@cp.Name</option>
-        }
-    </select>
-    <select class="form-control">
-        <option value="30">30</option>
-        <option value="90">90</option>
-        <option value="360">360</option>
+    @if (listCP.Count > 0)
+    {
+        <select class="form-control" @bind="selectID" @bind:event="oninput" @onchange="SetOnChangeSelect">
+            @foreach (var cp in listCP)
+            {
+                <option value=@cp.ChargePointId>@cp.Name</option>
+            }
+        </select>
+    }
+    <select class="form-control" @bind="period" @bind:event="oninput" @onchange="SetOnChangeSelect">
+        <option value="1">30</option>
+        <option value="2">90</option>
+        <option value="3">360</option>
     </select>
 </div>
 <div class="row">
@@ -77,18 +80,22 @@
     [Parameter]
     public string ts { get; set; }
     private List<ChargePoint> listCP = new List<ChargePoint>();
+    private string period { get; set; }
     protected override async Task OnInitializedAsync()
     {
         listCP = await ChargePointContextServices.GetChargePoints();
         //Console.WriteLine(String.Format("{0} -- {1}", id, ts));
         //var uri = Nav
-        if(listCP.Count>0)
-            transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel(listCP[0].ChargePointId,
-                "1", "1");
+        if (listCP.Count > 0) {
+            selectID = listCP[0].ChargePointId;
+            transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel(selectID,
+                "1", period);
+        }
     }
-    private void SetOnChangeSelect(ChangeEventArgs __e)
+    private async void SetOnChangeSelect(ChangeEventArgs __e)
     {
-
+        transactionListViewModels = await ChargePointContextServices.GetTransactionListViewModel(selectID,
+                "1", period);
     }
 }
 
